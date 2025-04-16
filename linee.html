@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <title>Timeline</title>
+
+  <link rel="canonical" href="https://codepen.io/knyttneve/pen/bgvmma">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap");
+
+    .timeline {
+      display: flex;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      flex-direction: column;
+      max-width: 700px;
+      position: relative;
+    }
+
+    .timeline__content-title {
+      font-weight: normal;
+      font-size: 66px;
+      margin: -10px 0 0 0;
+      transition: 0.4s;
+      padding: 0 10px;
+      box-sizing: border-box;
+      font-family: "Pathway Gothic One", sans-serif;
+      color: #f355f3;
+    }
+
+    .timeline__content-desc {
+      margin: 0;
+      font-size: 15px;
+      box-sizing: border-box;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: Cardo;
+      font-weight: normal;
+      line-height: 25px;
+    }
+
+    .timeline::before {
+      position: absolute;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      margin-left: -1px;
+      content: "";
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    @media only screen and (max-width: 767px) {
+      .timeline::before {
+        left: 40px;
+      }
+    }
+
+    .timeline-item {
+      padding: 40px 0;
+      opacity: 0.3;
+      filter: blur(2px);
+      transition: 0.5s;
+      box-sizing: border-box;
+      width: calc(50% - 40px);
+      display: flex;
+      position: relative;
+      transform: translateY(-80px);
+    }
+
+    .timeline-item:before {
+      content: attr(data-text);
+      letter-spacing: 3px;
+      width: 100%;
+      position: absolute;
+      color: rgba(250, 249, 250, 0.918);
+      font-size: 14px;
+      font-family: "Pathway Gothic One", sans-serif;
+      border-left: 2px solid rgba(255, 255, 255, 0.5);
+      top: 70%;
+      margin-top: -5px;
+      padding-left: 15px;
+      opacity: 0;
+      right: calc(-100% - 56px);
+    }
+
+    .timeline-item:nth-child(even) {
+      align-self: flex-end;
+    }
+
+    .timeline-item:nth-child(even):before {
+      right: auto;
+      text-align: right;
+      left: calc(-100% - 56px);
+      padding-left: 0;
+      border-left: none;
+      border-right: 2px solid rgba(255, 255, 255, 0.5);
+      padding-right: 15px;
+    }
+
+    .timeline-item--active {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0px);
+    }
+
+    .timeline-item--active:before {
+      top: 50%;
+      transition: 0.3s all 0.2s;
+      opacity: 1;
+    }
+
+    .timeline-item--active .timeline__content-title {
+      margin: -50px 0 20px 0;
+    }
+
+    @media only screen and (max-width: 767px) {
+      .timeline-item {
+        align-self: baseline !important;
+        width: 100%;
+        padding: 0 30px 150px 80px;
+      }
+
+      .timeline-item:before {
+        left: 10px !important;
+        padding: 0 !important;
+        top: 50px;
+        text-align: center !important;
+        width: 60px;
+        border: none !important;
+      }
+
+      .timeline-item:last-child {
+        padding-bottom: 40px;
+      }
+    }
+
+    .timeline__img {
+      max-width: 100%;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .timeline-container {
+      width: 100%;
+      position: relative;
+      padding: 80px 0;
+      transition: 0.3s ease 0s;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    .timeline-container:before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(99, 99, 99, 0.8);
+      content: "";
+    }
+
+    .timeline-header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 80px;
+      position: relative;
+    }
+
+    .timeline-header__title {
+      color: #fff;
+      font-size: 46px;
+      font-family: Cardo;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .timeline-header__subtitle {
+      color: rgba(255, 255, 255, 0.5);
+      font-family: "Pathway Gothic One", sans-serif;
+      font-size: 16px;
+      letter-spacing: 5px;
+      margin: 10px 0 0 0;
+      font-weight: normal;
+    }
+
+    .demo-footer {
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .demo-footer a {
+      color: #999;
+      display: inline-block;
+      font-family: Cardo;
+    }
+  </style>
+
+  <script>
+    window.console = window.console || function (t) { };
+  </script>
+
+
+
+</head>
+
+<body translate="no">
+  <audio id="backgroundAudio" autoplay loop hidden>
+    <source src="./musik/musikbruno1.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="scrollAudio" hidden>
+    <source src="./musik/scrollsound.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <div class="timeline-container" id="timeline-1">
+    <div class="timeline-header">
+      <h2 class="timeline-header__title">Love Story</h2>
+      <h3 class="timeline-header__subtitle">Azka and Nadwa</h3>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item" data-text="Your very first pictures that I took">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/fotopertamadihp.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">I'll never forget the excitement I felt the first time we met. We exchanged
+            smiles, captured each other’s photos, and in that brief moment, a connection sparked. Our conversation
+            flowed effortlessly, and as we shared our thoughts and stories, I became more and more curious about you.
+            That day will always hold a special place in my heart.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="First photos of you on my phone">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto2.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Tonight wasn’t just a date—it was a memory I know I’ll hold onto for a long time.
+             Thank you for being the most beautiful part of my day</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="My photo on your phone case">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto9.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">I took these photos for a few special reasons. First, you looked absolutely
+            stunning with that beautiful smile of yours. Second, I couldn’t get over how breathtaking you looked
+            overall. And third, it made me so happy to see my photo on your phone case it’s the sweetest gesture.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="First time you came to my house">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/fotosamamama.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Bringing you home for the first time felt like opening a small, quiet door 
+            to a part of my world I’d never shared before. I watched your smile as you greeted my mom, your voice soft,
+             your hands a little nervous but your presence, warm and respectful. My heart was racing the whole time, but 
+             when I saw the way she looked at you, I knew she saw what I see every day kindness, sincerity, and the way
+              you make me feel safe without even trying. It wasn’t just introducing you to my mom it was introducing you
+               to a piece of my heart. And seeing you both smile that day… it’s something I’ll carry with me forever</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Our First Selifes">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto1.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Our first selfie, and a moment I’ll never forget. Just the beginning of
+            countless memories we’ll capture together, but this one will always be special.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="First beach Date">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/fotopantai.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Our first beach date wasn’t loud or wild—it was soft, quiet, and full of little 
+            moments that meant everything. We didn’t run into the waves or play in the water. Instead, we just walked side by side,
+             barefoot in the sand, talking about life, dreams, and silly little things only we would find funny. You looked at peace, 
+             the kind of peace I’ve been looking for. We sat together on two simple chairs, facing the ocean, watching the sky slowly
+              melt into a golden sunset. We shared stories, smiles, and that calm silence that somehow said more than a thousand words.
+               It wasn’t about doing much it was about being there, together, and realizing how beautifully easy it felt to be around you</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="One of My Fav Moment">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto8.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Last night was special it was our very first iftar date together. We picked a cozy little café,
+             just the two of us, enjoying good food, soft laughs, and quiet moments between bites.
+              I loved how everything felt warm and effortless, like time slowed down just for us.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Another Favorite Moment">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto16.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Buka puasa with you at my old elementary school's iftar gathering felt like coming full
+             circle sharing memories from the past while building new ones with you. It’s kind of
+              surreal, sitting where I used to run around as a kid, now holding your hand and laughing
+               together. Everything just felt... right.</p>
+        </div>   
+      </div>
+      <div class="timeline-item" data-text="My Birthday">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/hbd2.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">
+            You made my birthday unforgettable with the perfect gift, a delicious cake and my favorite shoes.
+             But the best part was the love and thoughtfulness behind it all.
+              Thank you for making me feel so special!</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="First Graduation Photo">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/fotoperpisahan.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">High school graduation my very first, and one I’ll always remember.
+             It’s a mix of joy, a little sadness, and a lot of memories.
+              From late-night study sessions to laughing in the hallways with friends, every moment shaped who I am today.
+               Here's to closing this chapter and stepping into a new beginning with hope in my heart</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Mie Date">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto12.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">It wasn’t a fancy dinner or some five-star restaurant, just the two of us sitting close, 
+            sharing bowls of warm noodles and soft laughter.
+             Somehow, that simple mie date turned into one of my favorite memories.
+              It’s crazy how the smallest things like slurping noodles side by side can make my heart feel this full.
+               With you, even instant noodles taste like love.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="You with Beautiful Red Dress">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto14.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">
+            You in that beautiful red dress are nothing short of mesmerizing. The way it flows and complements your
+            grace truly highlights your unique beauty. Every time you wear it, you light up the room and capture my
+            heart all over again. I’m endlessly grateful to be by your side, admiring your elegance and charm. You truly
+            shine like a star!
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Your brithday">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/hbd3.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Happy birthday to my amazing girlfriend! Today, we celebrate not just the
+            day you were born, but every moment you’ve brought joy, laughter, and love into my life. You are a beautiful
+            soul who makes every day brighter, and I’m so grateful to share this journey with you. Here’s to more
+            adventures, laughter, and love in the coming year. I love you endlessly!</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="First Date">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto3.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Our first date will always hold a special place in my heart. It wasn’t just
+             about where we went or what we did—it was about the feeling. The way you looked at me, the way our conversations
+              flowed so naturally, like we’d known each other for years. There was laughter, a few shy moments, and a kind 
+              of quiet comfort that I’d never felt before. That day, I realized it didn’t matter what we 
+              were doing as long as it was with you, it already felt like home. And that, to me, was the beginning 
+              of something beautiful</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="beach date part 2">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto4.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Our first date will always hold a special place in my heart. It wasn’t
+             just about where we went or what we did it was about the feeling. The way you looked at me, 
+             the way our conversations flowed so naturally, like we’d known each other for years. 
+             There was laughter, a few shy moments, and a kind of quiet comfort that I’d never felt before.
+              That day, I realized it didn’t matter what we were doing as long as it was with you, it already felt like home.
+               And that, to me, was the beginning of something beautiful</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Date at Cafe Scale">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto5.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">Our date at Café Sekala felt like a scene from a slow, beautiful film. Tucked in our
+             little corner, with soft music playing and the warm aroma of coffee floating in the air, everything felt peaceful.
+              The place was quiet, but your presence filled the space in the most comforting way. We laughed, we talked, we simply 
+              existed in that perfect in between of calm and closeness. I still remember the way you looked at me across the table,
+               your eyes soft under the café lights. It wasn’t a grand moment, but it was real and honestly, that made it unforgettable.
+                Café Sekala gave us a cozy space, but it was you who made it feel like home.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-text="Date at Cafe Nako">
+        <div class="timeline__content"><img class="timeline__img" src="./foto/foto15.jpg" />
+          <h2 class="timeline__content-title"><i class="fa fa-heart"></i></h2>
+          <p class="timeline__content-desc">There was something effortlessly beautiful about our date at Café Nako. The natural light streaming
+             through the windows, the clean, cozy atmosphere, and the gentle buzz of people around us it all faded into the 
+             background the moment I sat across from you. We talked about everything and nothing, shared sips of coffee, and 
+             let time move slowly. You smiled at me between conversations, and I swear, in that light, you looked like my favorite 
+             kind of peace. Café Nako gave us a simple space to sit, but in that simplicity, I found one of the softest memories I’ll
+             carry with me a moment that didn’t need anything more than you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+  <script id="rendered-js">
+    (function ($) {
+      $.fn.timeline = function () {
+        var selectors = {
+          id: $(this),
+          item: $(this).find(".timeline-item"),
+          activeClass: "timeline-item--active",
+          img: ".timeline__img"
+        };
+
+        selectors.item.eq(0).addClass(selectors.activeClass);
+        selectors.id.css(
+          "background-image",
+          "url(" +
+          selectors.item.
+            first().
+            find(selectors.img).
+            attr("src") +
+          ")");
+
+        var itemLength = selectors.item.length;
+        $(window).scroll(function () {
+          var max, min;
+          var pos = $(this).scrollTop();
+          selectors.item.each(function (i) {
+            min = $(this).offset().top;
+            max = $(this).height() + $(this).offset().top;
+            var that = $(this);
+            if (i == itemLength - 2 && pos > min + $(this).height() / 2) {
+              selectors.item.removeClass(selectors.activeClass);
+              selectors.id.css(
+                "background-image",
+                "url(" +
+                selectors.item.
+                  last().
+                  find(selectors.img).
+                  attr("src") +
+                ")");
+
+              selectors.item.last().addClass(selectors.activeClass);
+            } else if (pos <= max - 40 && pos >= min) {
+              selectors.id.css(
+                "background-image",
+                "url(" +
+                $(this).
+                  find(selectors.img).
+                  attr("src") +
+                ")");
+
+              selectors.item.removeClass(selectors.activeClass);
+              $(this).addClass(selectors.activeClass);
+            }
+          });
+        });
+      };
+    })(jQuery);
+
+    $("#timeline-1").timeline();
+    //# sourceURL=pen.js
+  </script>
+  <script>
+    window.addEventListener('load', function () {
+      var audio = document.getElementById('backgroundAudio');
+      audio.play().catch(function (error) {
+        console.log('Autoplay was prevented:', error);
+      });
+    });
+
+    window.addEventListener('click', function () {
+      var audio = document.getElementById('backgroundAudio');
+      audio.play().catch(function (error) {
+        console.log('Autoplay was prevented:', error);
+      });
+    }, { once: true });
+
+    document.addEventListener('scroll', function () {
+      const timelineItems = document.querySelectorAll('.timeline-item');
+      const audio = document.getElementById('scrollAudio');
+
+      timelineItems.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+        if (isVisible) {
+          if (audio.paused) {
+            audio.play().catch(error => {
+              console.log('Autoplay was prevented:', error);
+            });
+          }
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
